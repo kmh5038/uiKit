@@ -8,48 +8,72 @@
 import UIKit
 
 class ViewController: UIViewController {
-
+    let addButton: UIButton = {
+        let addButton = UIButton()
+        addButton.setTitle("Add", for: .normal)
+        return addButton
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        view.backgroundColor = .systemBackground
         
-        view.backgroundColor = .white
+        tableView.delegate = self
+        tableView.dataSource = self
         
-        let helloLabel: UILabel = .init()
-        helloLabel.text = "Hello"
+        tableView.register(TableViewCell.self, forCellReuseIdentifier: "TableViewCell")
+        setConstraint()
         
-        view.addSubview(helloLabel)
-        helloLabel.translatesAutoresizingMaskIntoConstraints = false
+//        tableView.rowHeight = UITableView.automaticDimension
+//        tableView.estimatedRowHeight = UITableView.automaticDimension
         
-        let worldLabel: UILabel = .init()
-        worldLabel.text = "World"
+    }
+    
+    let tableView: UITableView = {
+        let tableView = UITableView()
+        return tableView
+    }()
+    
+    private func setConstraint() {
+        view.addSubview(tableView)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
         
-        view.addSubview(worldLabel)
-        worldLabel.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(addButton)
+        addButton.translatesAutoresizingMaskIntoConstraints = false
         
-        let textField: UITextField = .init()
-        textField.placeholder = "내용을 입력하세요"
-        textField.borderStyle = .roundedRect
-        
-        view.addSubview(textField)
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        
-        
-        
-        let Constraints = [
-            helloLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 100),
-            helloLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 150),
-            worldLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 100),
-            worldLabel.leadingAnchor.constraint(equalTo: helloLabel.trailingAnchor, constant: 20),
-            textField.topAnchor.constraint(equalTo: helloLabel.bottomAnchor, constant: 20),
-            textField.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+        NSLayoutConstraint.activate([
+            tableView.topAnchor.constraint(equalTo: view.topAnchor, constant: 100),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+//            addButton.bottomAnchor.constraint(equalTo: tableView.topAnchor, constant: 10),
+//            addButton.trailingAnchor.constraint(equalTo: tableView.trailingAnchor, constant: 0)
+            addButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 50),
+            addButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
-        ]
+            
         
-        NSLayoutConstraint.activate(Constraints)
-
+        
+        ])
     }
 
 }
+
+extension ViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 5
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "TableViewCell", for: indexPath) as? TableViewCell else {
+            return UITableViewCell()
+        }
+        return cell
+    }
+    
+    
+}
+
+
 
 
