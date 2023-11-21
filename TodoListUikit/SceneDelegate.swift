@@ -1,8 +1,8 @@
 //
 //  SceneDelegate.swift
-//  noStoryBoard
+//  TodoListUikit
 //
-//  Created by 김명현 on 11/13/23.
+//  Created by 김명현 on 11/19/23.
 //
 
 import UIKit
@@ -19,17 +19,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //        guard let _ = (scene as? UIWindowScene) else { return }
         
         guard let windowScene = ( scene as? UIWindowScene ) else { return }
-        
-        window = UIWindow(windowScene: windowScene)
-        
-        let viewController = ViewController()
-        
-        window?.rootViewController = viewController
-        
-        window?.makeKeyAndVisible()
-        window?.windowScene = windowScene
-        
-        
+               
+               window = UIWindow(windowScene: windowScene)
+               
+               let navigationController = UINavigationController(rootViewController: ViewController())
+               
+               window?.rootViewController = navigationController
+               
+               window?.makeKeyAndVisible()
+               window?.windowScene = windowScene
+
+
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

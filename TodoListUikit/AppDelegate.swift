@@ -1,8 +1,8 @@
 //
 //  AppDelegate.swift
-//  noStoryBoard
+//  TodoListUikit
 //
-//  Created by 김명현 on 11/13/23.
+//  Created by 김명현 on 11/19/23.
 //
 
 import UIKit
@@ -14,7 +14,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        return true
+        let window = UIWindow(frame: UIScreen.main.bounds)
+            let rootViewController = ViewController()
+            let navigationController = UINavigationController(rootViewController: rootViewController)
+            
+            // 윈도우에 내장된 UINavigationController를 루트 뷰 컨트롤러로 설정
+            window.rootViewController = navigationController
+            window.makeKeyAndVisible()
+            
+            return true
     }
 
     // MARK: UISceneSession Lifecycle
