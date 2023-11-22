@@ -17,24 +17,17 @@ class DetailViewController: UIViewController {
         return label
     }()
     
-   
-
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         view.backgroundColor = .white
         setConstraint()
-        
-       
     }
     
     func setConstraint() {
         view.addSubview(label)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = selectedTodo?.description
-        
-        
-        
         
         NSLayoutConstraint.activate([
             label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -44,7 +37,4 @@ class DetailViewController: UIViewController {
             
         ])
     }
-    
-   
-
 }

@@ -7,7 +7,7 @@
 
 import UIKit
 
-class TableViewCell: UITableViewCell {
+final class TableViewCell: UITableViewCell {
     
     var todoData: Todo?
     
@@ -70,7 +70,7 @@ class TableViewCell: UITableViewCell {
         
         todoData?.completed.toggle()
         button.setImage(UIImage(systemName: todoData?.completed ?? false ? "checkmark.circle.fill" : "checkmark.circle"), for: .normal)
-        print(todoData?.completed)
+        
         
     }
 }

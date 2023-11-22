@@ -8,9 +8,9 @@
 import Foundation
 
 final class TodoData {
-    static var shared = TodoData()
-    
-    private init() { }
+//    static var shared = TodoData()  viewModel로 바꿈
+//    
+//    private init() { }
     
      var dataList = [
         Todo(id: 1, title: "Grocery shopping", description: "Buy milk, eggs, bread, and cheese.", completed: false),

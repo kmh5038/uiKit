@@ -10,16 +10,18 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+ class ViewController: UIViewController {
     
-    var data = TodoData.shared.dataList {
-        didSet {
-            tableView.reloadData()
-        }
-    }
+//    var data = TodoData.shared.dataList
     
-    var tableView: UITableView = {
+    var viewModel = TodoData()
+    
+    lazy var tableView: UITableView = {
         let tableView = UITableView()
+        tableView.register(TableViewCell.self, forCellReuseIdentifier: "TableViewCell") // tableView에 cell등록
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
     
@@ -27,26 +29,23 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.dataSource = self
-        tableView.delegate = self
+        
         
         view.backgroundColor = .white
-        tableView.register(TableViewCell.self, forCellReuseIdentifier: "TableViewCell") // tableView에 cell등록
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addTapped))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editTapped))
         
         setConstraint()
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addTapped))
-        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editTapped))
     }
     
     override func viewWillAppear(_ animated: Bool) {
         tableView.reloadData()
-        print(data)
     }
     
     private func setConstraint() {
         view.addSubview(tableView)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
+        
         
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -69,7 +68,11 @@ class ViewController: UIViewController {
     
     
     @objc func addTapped() {
-        navigationController?.pushViewController(AddViewController(), animated: true)
+        let vc = AddViewController()
+        vc.viewModel = viewModel
+       
+        navigationController?.pushViewController(vc, animated: true)
+        // AddViewController()를 바로 넘겨주면 변경사항 적용 안됨.
     }
 }
 
@@ -77,12 +80,9 @@ class ViewController: UIViewController {
 
 extension ViewController: UITableViewDataSource {
     
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return data.count
+        return viewModel.dataList.count
     }
     
     
@@ -91,8 +91,7 @@ extension ViewController: UITableViewDataSource {
         
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "TableViewCell", for: indexPath) as? TableViewCell else { return UITableViewCell()}
         
-        let todoItem = data[indexPath.row]
-        
+        let todoItem = viewModel.dataList[indexPath.row]
         cell.setData(input: todoItem)
         
         
@@ -107,14 +106,14 @@ extension ViewController: UITableViewDataSource {
         if editingStyle == .delete {
             tableView.beginUpdates()
             tableView.deleteRows(at: [indexPath], with: .fade) // tableView 셀 삭제
-            data.remove(at: indexPath.row) // 실제 dataList 삭제
+            viewModel.dataList.remove(at: indexPath.row) // 실제 dataList 삭제
             tableView.endUpdates()
         }
     }
     
     // edit모드 순서변경
     func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        data.swapAt(sourceIndexPath.row, destinationIndexPath.row)
+        viewModel.dataList.swapAt(sourceIndexPath.row, destinationIndexPath.row)
     }
     
 }
@@ -122,7 +121,7 @@ extension ViewController: UITableViewDataSource {
 extension ViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let selectedTodo = data[indexPath.row]
+        let selectedTodo = viewModel.dataList[indexPath.row]
         
         let detailViewController = DetailViewController()
         
@@ -170,5 +169,4 @@ extension ViewController: UITableViewDelegate {
     
     
 }
-
 

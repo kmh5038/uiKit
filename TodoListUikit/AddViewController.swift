@@ -7,9 +7,14 @@
 
 import UIKit
 
-class AddViewController: UIViewController {
+final class AddViewController: UIViewController {
     
-    var data = TodoData.shared.dataList
+    var viewModel: TodoData?
+    
+    let scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        return scrollView
+    }()
     
     let header: UILabel = {
         let header = UILabel()
@@ -51,8 +56,13 @@ class AddViewController: UIViewController {
         var addButton = UIButton()
         addButton.setTitle("ADD", for: .normal)
         addButton.setTitleColor(.systemBlue, for: .normal)
-        addButton.backgroundColor = .lightGray
         addButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
+        if titleTextField.text?.isEmpty == true || scheduleTextView.text.isEmpty == true {
+            addButton.isUserInteractionEnabled = false
+        } else {
+            addButton.isUserInteractionEnabled = true
+        }
+        
         return addButton
     }()
     
@@ -60,65 +70,148 @@ class AddViewController: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = .white
+        
         setConstraint()
+        addKeyboardNotifications()
+        self.hideKeyborad()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        scrollView.contentSize = CGSize(width: scrollView.frame.width, height: scrollView.frame.height) // 스크롤뷰 서브뷰 범위
+        
+    }
+    
+    
+    
+    
+    func setData(input: TodoData) {
+        viewModel = input
     }
     
     func setConstraint() {
-        view.addSubview(header)
+        view.addSubview(scrollView)
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        
+        scrollView.addSubview(header)
         header.translatesAutoresizingMaskIntoConstraints = false
         
-        view.addSubview(titleLabel)
+        scrollView.addSubview(titleLabel)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         
-        view.addSubview(titleTextField)
+        scrollView.addSubview(titleTextField)
         titleTextField.translatesAutoresizingMaskIntoConstraints = false
         
-        view.addSubview(scheduleLabel)
+        scrollView.addSubview(scheduleLabel)
         scheduleLabel.translatesAutoresizingMaskIntoConstraints = false
         
-        view.addSubview(scheduleTextView)
+        scrollView.addSubview(scheduleTextView)
         scheduleTextView.translatesAutoresizingMaskIntoConstraints = false
         
-        view.addSubview(addButton)
+        scrollView.addSubview(addButton)
         addButton.translatesAutoresizingMaskIntoConstraints = false
         
-       
-    
+        
+        
+        
         NSLayoutConstraint.activate([
-            header.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 5),
-            header.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 30),
+            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            header.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 5),
+            header.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 30),
             titleLabel.topAnchor.constraint(equalTo: header.bottomAnchor, constant: 25),
-            titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            titleLabel.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
             titleTextField.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 10),
-            titleTextField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            titleTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            titleTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            titleTextField.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
+            titleTextField.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 20),
+            titleTextField.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -20),
             scheduleLabel.topAnchor.constraint(equalTo: titleTextField.bottomAnchor, constant: 20),
-            scheduleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            scheduleLabel.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
             scheduleTextView.topAnchor.constraint(equalTo: scheduleLabel.bottomAnchor, constant: 10),
-            scheduleTextView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            scheduleTextView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
             scheduleTextView.widthAnchor.constraint(equalToConstant: 350),
             scheduleTextView.heightAnchor.constraint(equalToConstant: 400),
-            addButton.topAnchor.constraint(equalTo: scheduleTextView.bottomAnchor, constant: 30),
-            addButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            addButton.topAnchor.constraint(equalTo: scheduleTextView.bottomAnchor, constant: 50),
+            addButton.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
             addButton.widthAnchor.constraint(equalToConstant: 50),
             addButton.heightAnchor.constraint(equalToConstant: 50)
         ])
+        
+        
     }
     
-
+    
     
     @objc func addButtonTapped() {
         
-        guard let title = titleLabel.text, !title.isEmpty else { return }
+        guard let title = titleTextField.text, !title.isEmpty else { return }
         guard let schedule = scheduleTextView.text, !schedule.isEmpty else { return }
-
-                
-        data.append(Todo(id: data.count + 1, title: title, description: schedule, completed: false))
+        
+        
+        viewModel?.dataList.append(Todo(id: (viewModel?.dataList.count ?? 0) + 1, title: title, description: schedule, completed: false))
+        
+        
         
         
         navigationController?.popViewController(animated: true)
         
     }
+    
+    func completionBtn(isOn: Bool) {
+        switch isOn {
+        case true:
+            addButton.isEnabled = true
+            addButton.setTitleColor(.systemBlue, for: .normal)
+        case false:
+            addButton.isEnabled = false
+            addButton.setTitleColor(.gray, for: .normal)
+        }
+    }
+    
+   
+    
+    func addKeyboardNotifications() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    func removeKeyboardNotifications() {
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    
+    
+    @objc func keyboardWillShow(noti: Notification) {
+        scrollView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 140, right: 0)
+    }
+    
+    @objc func keyboardWillHide(noti: Notification) {
+        scrollView.contentInset = .zero // 키보드가 내려가고 나면 가장자리 확장 0으로 변경
+    }
+    
+  
+    
 }
 
+
+
+extension UIViewController {
+    
+    //    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) { // 키보드 닫는 메서드 1
+    //           view.endEditing(true)
+    //       }
+    
+    func hideKeyborad() { // 키보드 닫는 메서드 2
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap) // 제스처 인식 추가
+    }
+    
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
+    }
+}
