@@ -125,7 +125,7 @@ extension ViewController: UITableViewDelegate {
         
         let detailViewController = DetailViewController()
         
-        detailViewController.selectedTodo = selectedTodo
+        detailViewController.selectedTodo = selectedTodo // detailView의 selectedTodo에 let selectedTodo = viewModel.dataList[indexPath.row] 값을 넘겨줌
         
         navigationController?.pushViewController(detailViewController, animated: true)
         // 뷰 이동 안됨 -> SceneDelegate에 rootView를 navigationView로 바꿔준다

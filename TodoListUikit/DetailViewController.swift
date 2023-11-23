@@ -11,11 +11,20 @@ class DetailViewController: UIViewController {
     
     var selectedTodo: Todo?
     
-    var label: UILabel = {
-        var label = UILabel()
-        label.numberOfLines = 2
-        return label
+    var fixLabel: UILabel = {
+        var fixLabel = UILabel()
+        fixLabel.text = "Schedule"
+        fixLabel.font = .preferredFont(forTextStyle: .headline)
+        return fixLabel
     }()
+    
+    var detailLabel: UILabel = {
+        var detailLabel = UILabel()
+        detailLabel.numberOfLines = 2
+        return detailLabel
+    }()
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,15 +34,23 @@ class DetailViewController: UIViewController {
     }
     
     func setConstraint() {
-        view.addSubview(label)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = selectedTodo?.description
+        
+        view.addSubview(fixLabel)
+        fixLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.addSubview(detailLabel)
+        detailLabel.translatesAutoresizingMaskIntoConstraints = false
+        detailLabel.text = selectedTodo?.description
+        
+        
         
         NSLayoutConstraint.activate([
-            label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            label.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            label.widthAnchor.constraint(equalToConstant: 300),
-            label.heightAnchor.constraint(equalToConstant: 100),
+            fixLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 200),
+            fixLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            detailLabel.topAnchor.constraint(equalTo: fixLabel.bottomAnchor, constant: 50),
+            detailLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            detailLabel.widthAnchor.constraint(equalToConstant: 300),
+            detailLabel.heightAnchor.constraint(equalToConstant: 100),
             
         ])
     }
