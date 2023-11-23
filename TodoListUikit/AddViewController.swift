@@ -161,8 +161,8 @@ final class AddViewController: UIViewController {
     
     @objc func addButtonTapped() {
         
-        guard let title = titleTextField.text, !title.isEmpty else { return }
-        guard let schedule = scheduleTextView.text, !schedule.isEmpty else { return }
+        guard let title = titleTextField.text, !title.isEmpty else { return } // guard문으로 textField가 비어 있으면 return이 실행되어 다음 line 실행안됨 (비었을때 추가못하게)
+        guard let schedule = scheduleTextView.text, !schedule.isEmpty else { return } // guard문으로 textView 비어 있으면 return이 실행되어 다음 line 실행안됨 (비었을때 추가못하게)
         
         viewModel?.dataList.append(Todo(id: (viewModel?.dataList.count ?? 0) + 1, title: title, description: schedule, completed: false))
 
